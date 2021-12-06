@@ -60,7 +60,52 @@
 // data.c.c1.cc = 5 //SET key=cc val=5
 // data.c.c2 = 5 // SET key=c2 val="重复"
 
+const render(key, val){
+  console.log(`SET key=${key} val=${val}`)
+}
 
+const defineReactive = (obj, key, value) => {
+  // 如果obj还是Object，则继续去遍历，深层遍历，递归
+  reactive(obj)
+  Object.defineProperty(obj, key, {
+    get() {
+      return val
+    },
+    set(newVal) {
+      if (newVal === val) {
+        // 数据相同，输出重复
+        val = "重复"
+      } else {
+        val = newVal
+      }
+
+      render(key, val)
+    }
+  })
+}
+
+const reactive = (obj) => {
+
+  if (typeof (obj) === "Object") {
+    for (const key in obj) {
+      defineReactive(obj, key, obj[key])
+    }
+  }
+}
+
+const data = {
+  a: 1,
+  b: 2,
+  c: {
+    c1: 3,
+    c2: {
+      c4: 4
+    }
+  },
+  d: 5
+}
+
+reactive(data)
 // 那Vue对于数组类型是怎么处理的？你能简单的那模拟一下对于数组方法的监听吗？要求最终输出如下方代码所示：
 
 const render = (action, ...args) => {
